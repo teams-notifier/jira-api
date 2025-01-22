@@ -1,0 +1,291 @@
+version: '1.5'
+$schema: https://adaptivecards.io/schemas/adaptive-card.json
+msteams:
+  width: Full
+selectAction:
+  type: Action.ToggleVisibility
+  targetElements:
+  - details
+  - showMore
+  - showLess
+type: AdaptiveCard
+fallbackText: |-
+  {{ fallback | indent(2) }}
+speak: |-
+  {{ fallback | indent(2) }}
+body:
+- type: ColumnSet
+  spacing: Small
+  columns:
+  - type: Column
+    verticalContentAlignment: Center
+    width: auto
+    items:
+    - type: Icon
+      name: ArrowSyncCheckmark
+      color: Accent
+  - type: Column
+    verticalContentAlignment: Center
+    spacing: Small
+    width: stretch
+    items:
+    - type: TextBlock
+      spacing: None
+      size: Medium
+      text: "[{{ issue.key }}] {{ issue.fields.summary }}"
+      weight: Bolder
+      wrap: true
+    - type: TextBlock
+      text: '[{{ issue.baseUrl }}/browse/{{ issue.key }}]({{ issue.baseUrl }}/browse/{{ issue.key }})'
+      wrap: true
+      spacing: None
+- type: RichTextBlock
+  id: showMore
+  spacing: Small
+  inlines:
+  - type: TextRun
+    underline: true
+    text: Show details...
+    selectAction:
+      type: Action.ToggleVisibility
+      targetElements:
+      - details
+      - showMore
+      - showLess
+{#
+- type: RichTextBlock
+  id: showLess
+  isVisible: false
+  spacing: Small
+  inlines:
+  - type: TextRun
+    underline: true
+    text: Hide details...
+    selectAction:
+      type: Action.ToggleVisibility
+      targetElements:
+      - details
+      - showMore
+      - showLess
+#}
+- type: Container
+  id: details
+  isVisible: false
+  items:
+  - type: Table
+    columns:
+    - width: 100px
+    - width: 5
+    firstRowAsHeaders: false
+    showGridLines: false
+    rows:
+    - type: TableRow
+      cells:
+      - type: TableCell
+        verticalContentAlignment: Center
+        items:
+        - type: TextBlock
+          text: Date
+          wrap: true
+          weight: Bolder
+      - type: TableCell
+        verticalContentAlignment: Center
+        items:
+        - type: TextBlock
+          text: "{{ issue.fields.sensible_date }} "
+          wrap: true
+
+    - type: TableRow
+      cells:
+      - type: TableCell
+        verticalContentAlignment: Center
+        items:
+        - type: TextBlock
+          text: Status
+          wrap: true
+          weight: Bolder
+      - type: TableCell
+        verticalContentAlignment: Center
+        items:
+        - type: TextBlock
+          text: "{{ issue.fields.status.name }} "
+          wrap: true
+
+    - type: TableRow
+      cells:
+      - type: TableCell
+        verticalContentAlignment: Center
+        items:
+        - type: TextBlock
+          text: Type
+          wrap: true
+          weight: Bolder
+      - type: TableCell
+        verticalContentAlignment: Center
+        items:
+        - type: ColumnSet
+          spacing: Small
+          columns:
+          - type: Column
+            verticalContentAlignment: Center
+            horizontalAlignment: Center
+            width: auto
+            items:
+            - type: Image
+              url: {{ issue.fields.issuetype.iconUrl }}
+              width: 16px
+              style: Person
+          - type: Column
+            verticalContentAlignment: Center
+            spacing: Small
+            width: stretch
+            items:
+            - type: TextBlock
+              text:  {{ issue.fields.issuetype.name }}
+{% if issue.fields.components | length %}
+    - type: TableRow
+      cells:
+      - type: TableCell
+        verticalContentAlignment: Center
+        items:
+        - type: TextBlock
+          text: Components
+          wrap: true
+          weight: Bolder
+      - type: TableCell
+        verticalContentAlignment: Center
+        items:
+        - type: TextBlock
+          text: "{{ issue.fields.components | map(attribute="name") | join(', ') }}"
+          wrap: true
+{% endif %}
+    - type: TableRow
+      cells:
+      - type: TableCell
+        items:
+        - type: TextBlock
+          text: Assigned to
+          wrap: true
+          weight: Bolder
+      - type: TableCell
+        verticalContentAlignment: Center
+        items:
+        - type: ColumnSet
+          spacing: Small
+          columns:
+          - type: Column
+            verticalContentAlignment: Center
+            horizontalAlignment: Center
+            width: auto
+            items:
+            - type: Image
+              url: {{ issue.fields.assignee.avatarUrls.thumb_48 }}
+              width: 16px
+              style: Person
+          - type: Column
+            verticalContentAlignment: Center
+            spacing: Small
+            width: stretch
+            items:
+            - type: TextBlock
+              text: {{ issue.fields.assignee.displayName }}
+              wrap: true
+    - type: TableRow
+      cells:
+      - type: TableCell
+        verticalContentAlignment: Center
+        items:
+        - type: TextBlock
+          text: Reported by
+          wrap: true
+          weight: Bolder
+      - type: TableCell
+        verticalContentAlignment: Center
+        items:
+        - type: ColumnSet
+          spacing: Small
+          columns:
+          - type: Column
+            verticalContentAlignment: Center
+            horizontalAlignment: Center
+            width: auto
+            items:
+            - type: Image
+              url: {{ issue.fields.reporter.avatarUrls.thumb_48 }}
+              width: 16px
+              style: Person
+          - type: Column
+            verticalContentAlignment: Center
+            spacing: Small
+            width: stretch
+            items:
+            - type: TextBlock
+              text:  {{ issue.fields.reporter.displayName }}
+              wrap: true
+{% if issue.fields.issuelinks %}
+  - type: Container
+    isVisible: true
+    spacing: Small
+    items:
+    - type: TextBlock
+      wrap: true
+      weight: Bolder
+      text: Links
+    - type: TextBlock
+      spacing: Small
+      wrap: true
+      text: |-
+{% for issuelink in issue.fields.issuelinks %}
+       * {{ issuelink.relation }} [[{{ issuelink.issue.key }}] {{ issuelink.issue.fields.summary }}]({{ issue.baseUrl }}/browse/{{ issuelink.issue.key }}) ({{ issuelink.issue.fields.status.name }})
+{% endfor %}
+{% endif %}
+{% if issue.fields.description %}
+  - type: RichTextBlock
+    id: showDesc
+    isVisible: true
+    spacing: Small
+    inlines:
+    - type: TextRun
+      underline: true
+      text: Show description...
+      selectAction:
+        type: Action.ToggleVisibility
+        targetElements:
+        - showDesc
+        - descCont
+  - type: Container
+    id: descCont
+    isVisible: false
+#    maxHeight: 200px
+#    showBorder: true
+#    style: emphasis
+#    bleed: true
+    selectAction:
+      type: Action.ToggleVisibility
+      targetElements:
+      - descCont
+      - showDesc
+    items:
+    - type: TextBlock
+      weight: Bolder
+      wrap: true
+      text: Description
+    - type: TextBlock
+      wrap: true
+      text: "*MS Teams limited markdown rendering*"
+      size: Small
+      weight: Lighter
+      spacing: None
+      isSubtle: true
+    - type: Container
+      maxHeight: 300px
+      showBorder: true
+      style: emphasis
+      items:
+      - type: TextBlock
+        spacing: Small
+
+        wrap: true
+        text: |-
+          {{ issue.fields.description_md | indent(10) }}
+{% endif %}

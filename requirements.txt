@@ -1,0 +1,12 @@
+python-dotenv
+python-dateutil
+pydantic
+httpx
+blibs
+fastapi[standard]
+jinja2
+pyyaml
+jira2markdown
+asgi-logger
+opentelemetry-distro
+opentelemetry-exporter-otlp
