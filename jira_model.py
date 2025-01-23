@@ -55,13 +55,12 @@ class AvatarUrls(BaseModel, extra="allow"):
 
 
 class User(BaseModel, extra="allow"):
-    emailAddress: str
     displayName: str
     avatarUrls: AvatarUrls
 
 
 class IssueComponent(BaseModel, extra="allow"):
-    id: str
+    id: int
     name: str
 
 
