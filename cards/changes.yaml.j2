@@ -170,6 +170,7 @@ body:
       - type: TableCell
         verticalContentAlignment: Center
         items:
+{% if issue.fields.assignee %}
         - type: ColumnSet
           spacing: Small
           columns:
@@ -190,6 +191,12 @@ body:
             - type: TextBlock
               text: {{ issue.fields.assignee.displayName }}
               wrap: true
+{% else %}
+        - type: TextBlock
+          text: "*Unassigned*"
+          wrap: true
+{% endif %}
+{% if issue.fields.reporter %}
     - type: TableRow
       cells:
       - type: TableCell
@@ -222,6 +229,7 @@ body:
             - type: TextBlock
               text:  {{ issue.fields.reporter.displayName }}
               wrap: true
+{% endif %}
 {% if issue.fields.issuelinks %}
   - type: Container
     isVisible: true
