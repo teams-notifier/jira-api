@@ -32,7 +32,8 @@ body:
     - type: TextBlock
       spacing: None
       size: Medium
-      text: "[{{ issue.key }}] {{ issue.fields.summary }}"
+      text: |-
+        [{{ issue.key }}] {{ issue.fields.summary }}
       weight: Bolder
       wrap: true
     - type: TextBlock
