@@ -40,19 +40,7 @@ body:
       text: '[{{ issue.baseUrl }}/browse/{{ issue.key }}]({{ issue.baseUrl }}/browse/{{ issue.key }})'
       wrap: true
       spacing: None
-- type: RichTextBlock
-  id: showMore
-  spacing: Small
-  inlines:
-  - type: TextRun
-    underline: true
-    text: Show details...
-    selectAction:
-      type: Action.ToggleVisibility
-      targetElements:
-      - details
-      - showMore
-      - showLess
+
 {#
 - type: RichTextBlock
   id: showLess
@@ -69,8 +57,58 @@ body:
       - showMore
       - showLess
 #}
+
+- type: Container
+  items:
+  - type: Table
+    columns:
+    - width: 100px
+    - width: 5
+    firstRowAsHeaders: false
+    showGridLines: false
+    rows:
+
+    - type: TableRow
+      cells:
+      - type: TableCell
+        items:
+        - type: TextBlock
+          text: Assigned to
+          wrap: true
+          weight: Bolder
+      - type: TableCell
+        verticalContentAlignment: Center
+        items:
+{% if issue.fields.assignee %}
+        - type: ColumnSet
+          spacing: Small
+          columns:
+          - type: Column
+            verticalContentAlignment: Center
+            horizontalAlignment: Center
+            width: auto
+            items:
+            - type: Image
+              url: {{ issue.fields.assignee.avatarUrls.thumb_48 }}
+              width: 16px
+              style: Person
+          - type: Column
+            verticalContentAlignment: Center
+            spacing: Small
+            width: stretch
+            items:
+            - type: TextBlock
+              text: {{ issue.fields.assignee.displayName }}
+              wrap: true
+{% else %}
+        - type: TextBlock
+          text: "*Unassigned*"
+          wrap: true
+{% endif %}
+
 - type: Container
   id: details
+  spacing: "Small"
   isVisible: false
   items:
   - type: Table
@@ -80,6 +118,42 @@ body:
     firstRowAsHeaders: false
     showGridLines: false
     rows:
+
+{% if issue.fields.reporter %}
+    - type: TableRow
+      cells:
+      - type: TableCell
+        verticalContentAlignment: Center
+        items:
+        - type: TextBlock
+          text: Reported by
+          wrap: true
+          weight: Bolder
+      - type: TableCell
+        verticalContentAlignment: Center
+        items:
+        - type: ColumnSet
+          spacing: Small
+          columns:
+          - type: Column
+            verticalContentAlignment: Center
+            horizontalAlignment: Center
+            width: auto
+            items:
+            - type: Image
+              url: {{ issue.fields.reporter.avatarUrls.thumb_48 }}
+              width: 16px
+              style: Person
+          - type: Column
+            verticalContentAlignment: Center
+            spacing: Small
+            width: stretch
+            items:
+            - type: TextBlock
+              text:  {{ issue.fields.reporter.displayName }}
+              wrap: true
+{% endif %}
+
     - type: TableRow
       cells:
       - type: TableCell
@@ -160,77 +234,6 @@ body:
           text: "{{ issue.fields.components | map(attribute="name") | join(', ') }}"
           wrap: true
 {% endif %}
-    - type: TableRow
-      cells:
-      - type: TableCell
-        items:
-        - type: TextBlock
-          text: Assigned to
-          wrap: true
-          weight: Bolder
-      - type: TableCell
-        verticalContentAlignment: Center
-        items:
-{% if issue.fields.assignee %}
-        - type: ColumnSet
-          spacing: Small
-          columns:
-          - type: Column
-            verticalContentAlignment: Center
-            horizontalAlignment: Center
-            width: auto
-            items:
-            - type: Image
-              url: {{ issue.fields.assignee.avatarUrls.thumb_48 }}
-              width: 16px
-              style: Person
-          - type: Column
-            verticalContentAlignment: Center
-            spacing: Small
-            width: stretch
-            items:
-            - type: TextBlock
-              text: {{ issue.fields.assignee.displayName }}
-              wrap: true
-{% else %}
-        - type: TextBlock
-          text: "*Unassigned*"
-          wrap: true
-{% endif %}
-{% if issue.fields.reporter %}
-    - type: TableRow
-      cells:
-      - type: TableCell
-        verticalContentAlignment: Center
-        items:
-        - type: TextBlock
-          text: Reported by
-          wrap: true
-          weight: Bolder
-      - type: TableCell
-        verticalContentAlignment: Center
-        items:
-        - type: ColumnSet
-          spacing: Small
-          columns:
-          - type: Column
-            verticalContentAlignment: Center
-            horizontalAlignment: Center
-            width: auto
-            items:
-            - type: Image
-              url: {{ issue.fields.reporter.avatarUrls.thumb_48 }}
-              width: 16px
-              style: Person
-          - type: Column
-            verticalContentAlignment: Center
-            spacing: Small
-            width: stretch
-            items:
-            - type: TextBlock
-              text:  {{ issue.fields.reporter.displayName }}
-              wrap: true
-{% endif %}
 {% if issue.fields.issuelinks %}
   - type: Container
     isVisible: true
@@ -248,8 +251,11 @@ body:
        * {{ issuelink.relation }} [[{{ issuelink.issue.key }}] {{ issuelink.issue.fields.summary }}]({{ issue.baseUrl }}/browse/{{ issuelink.issue.key }}) ({{ issuelink.issue.fields.status.name }})
 {% endfor %}
 {% endif %}
+- type: Container
+  spacing: "Small"
+  items:
 {% if issue.fields.description %}
-  - type: RichTextBlock
+  {# - type: RichTextBlock
     id: showDesc
     isVisible: true
     spacing: Small
@@ -261,19 +267,21 @@ body:
         type: Action.ToggleVisibility
         targetElements:
         - showDesc
-        - descCont
+        - descCont #}
   - type: Container
     id: descCont
-    isVisible: false
+#    isVisible: false
+
 #    maxHeight: 200px
 #    showBorder: true
 #    style: emphasis
 #    bleed: true
-    selectAction:
-      type: Action.ToggleVisibility
-      targetElements:
-      - descCont
-      - showDesc
+
+#    selectAction:
+#      type: Action.ToggleVisibility
+#      targetElements:
+#      - descCont
+#      - showDesc
     items:
     - type: TextBlock
       weight: Bolder
@@ -287,7 +295,7 @@ body:
       spacing: None
       isSubtle: true
     - type: Container
-      maxHeight: 300px
+      maxHeight: 150px
       showBorder: true
       style: emphasis
       items:
