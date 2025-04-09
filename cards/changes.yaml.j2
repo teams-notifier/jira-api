@@ -106,6 +106,52 @@ body:
           wrap: true
 {% endif %}
 
+{% if issue.fields.participants %}
+    - type: TableRow
+      cells:
+      - type: TableCell
+        items:
+        - type: TextBlock
+          text: Participants
+          wrap: true
+          weight: Bolder
+      - type: TableCell
+        verticalContentAlignment: Center
+        items:
+{% for participant in issue.fields.participants %}
+{% if loop.index0 is divisibleby(3) %}
+        - type: ColumnSet
+          spacing: Small
+          columns:
+{% endif %}
+          - type: Column
+            verticalContentAlignment: Center
+            horizontalAlignment: Center
+            width: auto
+            items:
+            - type: ColumnSet
+              spacing: Small
+              columns:
+              - type: Column
+                verticalContentAlignment: Center
+                horizontalAlignment: Center
+                width: auto
+                items:
+                - type: Image
+                  url: {{ participant.avatarUrls.thumb_48 }}
+                  width: 16px
+                  style: Person
+              - type: Column
+                verticalContentAlignment: Center
+                spacing: Small
+                width: stretch
+                items:
+                - type: TextBlock
+                  text: {{ participant.displayName }}
+                  wrap: true
+{% endfor %}
+{% endif %}
+
 - type: Container
   id: details
   spacing: "Small"

@@ -16,6 +16,7 @@ class DefaultConfig:
     VALID_X_WEBHOOK_SHARED_SECRET = os.environ.get("VALID_X_WEBHOOK_SHARED_SECRET", "")
     HMAC_KEYS = json.loads(os.environ.get("HMAC_KEYS", "{}"))
     _valid_tokens: list[str]
+    PARTICIPANTS_CUSTOM_FIELD = os.environ.get("PARTICIPANTS_CUSTOM_FIELD", "PARTICIPANTS_CUSTOM_FIELD")
 
     def __init__(self):
         self._valid_tokens = list([t.strip() for t in self.VALID_X_SHARED_SECRET_TOKEN.lower().split(",")])
