@@ -8,6 +8,8 @@ from pydantic import Field
 from pydantic import field_validator
 from pydantic_core import PydanticUseDefault
 
+from config import config
+
 
 class IssueType(BaseModel, extra="allow"):
     name: str
@@ -74,8 +76,12 @@ class IssueFields(BaseModel, extra="allow"):
     resolutiondate: int | str | None = ""
     updated: int | str = 0
     description: str = ""
+    participants: list[User] = Field(  # type: ignore[literal-required]
+        alias=config.PARTICIPANTS_CUSTOM_FIELD,
+        default=[],
+    )
 
-    @field_validator("description", mode="before")
+    @field_validator("description", "participants", mode="before")
     @classmethod
     def none_to_default(cls, v):
         if v is None:

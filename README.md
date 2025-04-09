@@ -18,6 +18,7 @@ Environment variables or `.env`:
 * `ACTIVITY_API`: `activity-api` base URL (ex: `https://activity-api:3981/`)
 * `VALID_X_SHARED_SECRET_TOKEN`: comma separated list of Gitlab's Secret token (sent as `X-Shared-Secret-Token` header). A UUIDv4 generated token is recommended.
 * `HMAC_KEYS`: a json dict mapping keys to secrets for webhook ex: `HMAC_KEYS='{"key1":"aaaaaa","key2":"bbbbbb"}'`
+* `PARTICIPANTS_CUSTOM_FIELD`: custom field id of type *User picker (multiple)* to be credited in the card ex: `customfield_12345`
 
 
 # Jira Automation workflow
